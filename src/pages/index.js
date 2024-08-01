@@ -6,10 +6,28 @@ import { useState } from 'react';
 const Input = () => {
   const [inputValue, setInputValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [error, setError] = useState(false)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleClearInput = () => {
     setInputValue('');
+    setIsFocused(false)
+    setError(false)
   };
+
+  const validation = (email)=>{
+    if(!emailRegex.test(email)){
+      setError(true)
+    } else {
+      setError(false)
+    }
+  }
+
+  const handleChange = (e) => {
+    e.preventDefault
+    setInputValue(e.target.value)
+    validation(e.target.value)
+  }
 
   return (
     <div className={s.containerInput}>
@@ -19,15 +37,16 @@ const Input = () => {
         </label>
       )}
       <input
-        className={s.input}
+        className={`${s.input} ${error ? s.inputError : ''}`}
         type="text"
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onChange={handleChange}
+        onClick={() => setIsFocused(true)}
+        onBlur={() => !inputValue.length ? setIsFocused(false) : null}
         placeholder={!isFocused ? "Escribe tu correo electrónico" : ""}
       />
       {isFocused && (
+        <button className={s.button}>
         <Image
           className={s.image}
           src={cerrar}
@@ -36,6 +55,7 @@ const Input = () => {
           height={25}
           onClick={handleClearInput}
         />
+        </button>
       )}
     </div>
   );
